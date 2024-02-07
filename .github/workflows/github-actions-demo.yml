@@ -56,3 +56,4 @@ jobs:
           ${{ matrix.compiler }} --version
           [ ! -x "$(command -v ucx_info)" ] || ucx_info -v
           echo $PATH
+          ls -a ~/.local
