@@ -23,9 +23,6 @@ jobs:
       matrix:
         compiler: [gcc-12, clang-15]
         mpi: [openmpi, mpich]
-    env:
-      CC: ${{ matrix.compiler }}
-      CXX: ${{ matrix.compiler }}
     steps:
       - name: Set compiler envs
         run: |
@@ -38,7 +35,7 @@ jobs:
           path: ~/.local
           key: mpi-build-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.mpi }}
       - if: ${{ matrix.mpi == 'openmpi' && steps.cache-mpi.outputs.cache-hit != 'true' }}
-        name: Install UCX
+        name: Build and install UCX
         env:
           UCX_VERSION: 1.15.0
         run: |
@@ -46,19 +43,31 @@ jobs:
           wget -q https://github.com/openucx/ucx/releases/download/v${UCX_VERSION}/ucx-${UCX_VERSION}.tar.gz
           tar xf ucx-${UCX_VERSION}.tar.gz
           cd ucx-${UCX_VERSION}/
-          ./configure CC=$CC CXX=$CXX CFLAGS="-Wno-error" --prefix=${HOME}/.local --without-go
+          ./configure CFLAGS="-Wno-error" --prefix=${HOME}/.local --without-go
           make -j
           make install
       - if: ${{ matrix.mpi == 'openmpi' && steps.cache-mpi.outputs.cache-hit != 'true' }}
-        name: Install Open MPI
+        name: Build and install Open MPI
         env:
           OPENMPI_VERSION: 5.0.1
         run: |
           echo "Installing Open MPI v${OPENMPI_VERSION}..."
-          wget -q https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-${OPENMPI_VERSION}.tar.bz2
+          wget -q https://download.open-mpi.org/release/open-mpi/v$(echo $OPENMPI_VERSION | sed 's/\.[0-9]*$//')/openmpi-${OPENMPI_VERSION}.tar.bz2
           tar xf openmpi-${OPENMPI_VERSION}.tar.bz2
           cd openmpi-${OPENMPI_VERSION}
-          ./configure CC=$CC CXX=$CXX --prefix=${HOME}/.local --with-ucx=${HOME}/.local --disable-man-pages --with-pmix=internal --with-hwloc=internal --with-libevent=internal
+          ./configure --prefix=${HOME}/.local --with-ucx=${HOME}/.local --disable-man-pages --with-pmix=internal --with-hwloc=internal --with-libevent=internal
+          make -j
+          make install
+      - if: ${{ matrix.mpi == 'mpich' && steps.cache-mpi.outputs.cache-hit != 'true' }}
+        name: Build and install MPICH
+        env:
+          MPICH_VERSION: 4.1.2
+        run: |
+          echo "Installing MPICH v${MPICH_VERSION}..."
+          wget -q https://www.mpich.org/static/downloads/${MPICH_VERSION}/mpich-${MPICH_VERSION}.tar.gz
+          tar xf mpich-${MPICH_VERSION}.tar.gz
+          cd mpich-${MPICH_VERSION}
+          ./configure --prefix=${HOME}/.local
           make -j
           make install
       - name: Print environments
@@ -66,5 +75,7 @@ jobs:
           echo "Compiler   : ${{ matrix.compiler }}"
           echo "MPI        : ${{ matrix.mpi }}"
           echo "# of cores : $(nproc)"
-          ${{ matrix.compiler }} --version
           [ ! -x "$(command -v ucx_info)" ] || ucx_info -v
+          mpicc --version
+          mpicxx --version
+          mpiexec --version
