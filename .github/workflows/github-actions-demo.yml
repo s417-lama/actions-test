@@ -20,11 +20,30 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        compiler: [g++-11, clang++-15]
+        compiler: [gcc-12, clang-15]
         mpi: [openmpi, mpich]
     steps:
+      - name: Cache MPI installations
+        id: cache-mpi
+        uses: actions/cache@v4
+        with:
+          path: ~/opt
+          key: mpi-build-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.mpi }}
+      - if: ${{ matrix.compiler == "openmpi" && steps.cache-mpi.outputs.cache-hit != "true" }}
+        name: Install Open MPI and UCX
+        run: |
+          UCX_VERSION=1.15.0
+          echo "Installing UCX v${UCX_VERSION}..."
+          wget -q https://github.com/openucx/ucx/releases/download/v${UCX_VERSION}/ucx-${UCX_VERSION}.tar.gz
+          tar xvf ucx-${UCX_VERSION}.tar.gz
+          cd ucx-${UCX_VERSION}/
+          ./configure CC=${{ matrix.compiler }} --prefix=${HOME}/opt/ucx
+          make -j
+          make install
       - name: Print environments
         run: |
-          echo "Compiler : ${{ matrix.compiler }}"
-          echo "MPI      : ${{ matrix.mpi }}"
+          echo "Compiler   : ${{ matrix.compiler }}"
+          echo "MPI        : ${{ matrix.mpi }}"
+          echo "# of cores : $(nproc)"
           ${{ matrix.compiler }} --version
+          [ ! -x "$(command -v ucx_info)" ] || ucx_info -v
