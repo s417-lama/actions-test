@@ -37,7 +37,7 @@ jobs:
         with:
           path: ~/.local
           key: mpi-build-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.mpi }}
-      - if: ${{ steps.cache-mpi.outputs.cache-hit != 'true' }}
+      - if: ${{ matrix.mpi == 'openmpi' && steps.cache-mpi.outputs.cache-hit != 'true' }}
         name: Install UCX
         env:
           UCX_VERSION: 1.15.0
