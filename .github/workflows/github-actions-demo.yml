@@ -24,5 +24,5 @@ jobs:
         mpi: [openmpi, mpich]
     steps:
       - run: |
-        echo "Compiler : ${{ matrix.compiler }}"
-        echo "MPI      : ${{ matrix.mpi }}"
+          echo "Compiler : ${{ matrix.compiler }}"
+          echo "MPI      : ${{ matrix.mpi }}"
