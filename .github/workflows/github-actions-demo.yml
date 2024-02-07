@@ -16,3 +16,13 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+  example_matrix:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        compiler: [g++-11, clang++-15]
+        mpi: [openmpi, mpich]
+    steps:
+      - run: |
+        echo "Compiler : ${{ matrix.compiler }}"
+        echo "MPI      : ${{ matrix.mpi }}"
