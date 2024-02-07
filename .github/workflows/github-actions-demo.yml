@@ -45,7 +45,7 @@ jobs:
           wget -q https://github.com/openucx/ucx/releases/download/v${UCX_VERSION}/ucx-${UCX_VERSION}.tar.gz
           tar xvf ucx-${UCX_VERSION}.tar.gz
           cd ucx-${UCX_VERSION}/
-          ./configure CC=$CC CXX=$CXX CFLAGS="-Dassert=assert" --prefix=${HOME}/opt/ucx --without-go
+          ./configure CC=$CC CXX=$CXX CFLAGS="-D'assert(x)=(void)(x)'" --prefix=${HOME}/opt/ucx --without-go
           make -j
           make install
       - name: Print environments
