@@ -46,7 +46,8 @@ jobs:
           tar xvf ucx-${UCX_VERSION}.tar.gz
           cd ucx-${UCX_VERSION}/
           ./configure CC=$CC CXX=$CXX --prefix=${HOME}/opt/ucx --enable-debug --without-go
-          make VERBOSE=1 -j
+          make SHELL='sh -x'
+          make -j
           make install
       - name: Print environments
         run: |
