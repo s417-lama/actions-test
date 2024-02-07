@@ -33,7 +33,8 @@ jobs:
           mpiexec --version
       - name: Run MPI
         run: |
-          export OMPI_MCA_prte_set_default_slots=hwthreads
+          echo $CC
+          echo $CXX
           echo "$ mpiexec hostname"
           mpiexec hostname
           echo

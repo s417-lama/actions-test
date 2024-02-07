@@ -57,3 +57,8 @@ runs:
         ./configure --prefix=${HOME}/.local
         make -j$(nproc)
         make install
+    - if: ${{ inputs.mpi == 'openmpi' }}
+      name: Set environment variables for Open MPI
+      shell: bash
+      run: |
+          echo "OMPI_MCA_prte_set_default_slots=hwthreads" >> "$GITHUB_ENV"
