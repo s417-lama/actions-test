@@ -8,6 +8,7 @@ runs:
   using: composite
   steps:
     - name: Set compiler envs
+      shell: bash
       run: |
         echo "CC=${{ inputs.compiler }}" >> "$GITHUB_ENV"
         echo "CXX=$(echo ${{ inputs.compiler }} | sed -e 's/gcc/g++/' -e 's/clang/clang++/')" >> "$GITHUB_ENV"
@@ -21,6 +22,7 @@ runs:
       name: Build and install UCX
       env:
         UCX_VERSION: 1.15.0
+      shell: bash
       run: |
         echo "Installing UCX v${UCX_VERSION}..."
         wget -q https://github.com/openucx/ucx/releases/download/v${UCX_VERSION}/ucx-${UCX_VERSION}.tar.gz
@@ -33,6 +35,7 @@ runs:
       name: Build and install Open MPI
       env:
         OPENMPI_VERSION: 5.0.1
+      shell: bash
       run: |
         echo "Installing Open MPI v${OPENMPI_VERSION}..."
         wget -q https://download.open-mpi.org/release/open-mpi/v$(echo $OPENMPI_VERSION | sed 's/\.[0-9]*$//')/openmpi-${OPENMPI_VERSION}.tar.bz2
@@ -45,6 +48,7 @@ runs:
       name: Build and install MPICH
       env:
         MPICH_VERSION: 4.1.2
+      shell: bash
       run: |
         echo "Installing MPICH v${MPICH_VERSION}..."
         wget -q https://www.mpich.org/static/downloads/${MPICH_VERSION}/mpich-${MPICH_VERSION}.tar.gz
