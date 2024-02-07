@@ -31,13 +31,19 @@ jobs:
           echo
           echo "$ mpiexec --version"
           mpiexec --version
+      - name: Compile an MPI program
+        run: |
+          mpicc test_mpi.c
       - name: Run MPI
         run: |
-          echo "$ mpiexec hostname"
-          mpiexec hostname
+          echo "$ mpiexec ./a.out"
+          mpiexec ./a.out
           echo
-          echo "$ mpiexec -n 2 hostname"
-          mpiexec -n 2 hostname
+          echo "$ mpiexec -n 1 ./a.out"
+          mpiexec -n 1 ./a.out
           echo
-          echo "$ mpiexec -n 4 hostname"
-          mpiexec -n 4 hostname
+          echo "$ mpiexec -n 2 ./a.out"
+          mpiexec -n 2 ./a.out
+          echo
+          echo "$ mpiexec -n 4 ./a.out"
+          mpiexec -n 4 ./a.out
