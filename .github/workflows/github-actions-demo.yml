@@ -43,7 +43,7 @@ jobs:
           wget -q https://github.com/openucx/ucx/releases/download/v${UCX_VERSION}/ucx-${UCX_VERSION}.tar.gz
           tar xf ucx-${UCX_VERSION}.tar.gz
           cd ucx-${UCX_VERSION}/
-          ./configure CFLAGS="-Wno-error" --prefix=${HOME}/.local --without-go
+          ./configure CC="$CC" CXX="$CXX" CFLAGS="-Wno-error" --prefix=${HOME}/.local --without-go
           make -j
           make install
       - if: ${{ matrix.mpi == 'openmpi' && steps.cache-mpi.outputs.cache-hit != 'true' }}
@@ -55,7 +55,7 @@ jobs:
           wget -q https://download.open-mpi.org/release/open-mpi/v$(echo $OPENMPI_VERSION | sed 's/\.[0-9]*$//')/openmpi-${OPENMPI_VERSION}.tar.bz2
           tar xf openmpi-${OPENMPI_VERSION}.tar.bz2
           cd openmpi-${OPENMPI_VERSION}
-          ./configure --prefix=${HOME}/.local --with-ucx=${HOME}/.local --disable-man-pages --with-pmix=internal --with-hwloc=internal --with-libevent=internal
+          ./configure CC="$CC" CXX="$CXX" --prefix=${HOME}/.local --with-ucx=${HOME}/.local --disable-man-pages --with-pmix=internal --with-hwloc=internal --with-libevent=internal
           make -j
           make install
       - if: ${{ matrix.mpi == 'mpich' && steps.cache-mpi.outputs.cache-hit != 'true' }}
@@ -67,7 +67,7 @@ jobs:
           wget -q https://www.mpich.org/static/downloads/${MPICH_VERSION}/mpich-${MPICH_VERSION}.tar.gz
           tar xf mpich-${MPICH_VERSION}.tar.gz
           cd mpich-${MPICH_VERSION}
-          ./configure --prefix=${HOME}/.local
+          ./configure CC="$CC" CXX="$CXX" --prefix=${HOME}/.local
           make -j
           make install
       - name: Print environments
