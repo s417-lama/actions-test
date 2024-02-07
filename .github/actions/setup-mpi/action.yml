@@ -62,3 +62,8 @@ runs:
       shell: bash
       run: |
           echo "OMPI_MCA_prte_set_default_slots=hwthreads" >> "$GITHUB_ENV"
+    - if: ${{ inputs.mpi == 'mpich' }}
+      name: Set environment variables for MPICH
+      shell: bash
+      run: |
+          echo "MPICH_ASYNC_PROGRESS=1" >> "$GITHUB_ENV"

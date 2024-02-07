@@ -33,8 +33,6 @@ jobs:
           mpiexec --version
       - name: Run MPI
         run: |
-          echo $CC
-          echo $CXX
           echo "$ mpiexec hostname"
           mpiexec hostname
           echo
