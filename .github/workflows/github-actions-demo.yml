@@ -10,17 +10,27 @@ jobs:
         compiler: [gcc-12, clang-15]
         mpi: [openmpi, mpich]
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-mpi
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+      - name: Setup MPI
+        uses: ./.github/actions/setup-mpi
         with:
           compiler: ${{ matrix.compiler }}
           mpi: ${{ matrix.mpi }}
       - name: Print environments
         run: |
-          echo "Compiler   : ${{ matrix.compiler }}"
-          echo "MPI        : ${{ matrix.mpi }}"
-          echo "# of cores : $(nproc)"
-          [ ! -x "$(command -v ucx_info)" ] || ucx_info -v
+          echo "Compiler : ${{ matrix.compiler }}"
+          echo "MPI      : ${{ matrix.mpi }}"
+          echo "nproc    : $(nproc)"
+          echo
+          echo "$ mpicc --version"
           mpicc --version
+          echo
+          echo "$ mpicxx --version"
           mpicxx --version
+          echo
+          echo "$ mpiexec --version"
           mpiexec --version
+      - name: Run MPI
+        run: |
+          mpirun hostname
