@@ -22,6 +22,7 @@ jobs:
           echo "Compiler : ${{ matrix.compiler }}"
           echo "MPI      : ${{ matrix.mpi }}"
           echo "nproc    : $(nproc)"
+          echo "hostname : $(hostname)"
           echo
           echo "$ mpicc --version"
           mpicc --version
