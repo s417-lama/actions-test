@@ -23,6 +23,8 @@ jobs:
         compiler: [g++-11, clang++-15]
         mpi: [openmpi, mpich]
     steps:
-      - run: |
+      - name: Print environments
+        run: |
           echo "Compiler : ${{ matrix.compiler }}"
           echo "MPI      : ${{ matrix.mpi }}"
+          ${{ matrix.compiler }} --version
