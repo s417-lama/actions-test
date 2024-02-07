@@ -55,3 +55,4 @@ jobs:
           echo "# of cores : $(nproc)"
           ${{ matrix.compiler }} --version
           [ ! -x "$(command -v ucx_info)" ] || ucx_info -v
+          echo $PATH
