@@ -33,11 +33,12 @@ jobs:
           mpiexec --version
       - name: Run MPI
         run: |
-          echo "$ mpirun hostname"
-          mpirun hostname
+          export OMPI_MCA_prte_set_default_slots=hwthreads
+          echo "$ mpiexec hostname"
+          mpiexec hostname
           echo
-          echo "$ mpirun -n 2 hostname"
-          mpirun -n 2 hostname
+          echo "$ mpiexec -n 2 hostname"
+          mpiexec -n 2 hostname
           echo
-          echo "$ mpirun -n 4 hostname"
-          mpirun -n 4 hostname
+          echo "$ mpiexec -n 4 hostname"
+          mpiexec -n 4 hostname
