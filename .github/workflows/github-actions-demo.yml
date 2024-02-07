@@ -19,6 +19,7 @@ jobs:
   example_matrix:
     runs-on: ubuntu-22.04
     strategy:
+      fail-fast: false
       matrix:
         compiler: [gcc-12, clang-15]
         mpi: [openmpi, mpich]
