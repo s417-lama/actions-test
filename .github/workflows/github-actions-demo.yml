@@ -37,15 +37,28 @@ jobs:
         with:
           path: ~/.local
           key: mpi-build-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.mpi }}
-      - if: ${{ matrix.mpi == 'openmpi' && steps.cache-mpi.outputs.cache-hit != 'true' }}
-        name: Install Open MPI and UCX
+      - if: ${{ steps.cache-mpi.outputs.cache-hit != 'true' }}
+        name: Install UCX
+        env:
+          UCX_VERSION: 1.15.0
         run: |
-          UCX_VERSION=1.15.0
           echo "Installing UCX v${UCX_VERSION}..."
           wget -q https://github.com/openucx/ucx/releases/download/v${UCX_VERSION}/ucx-${UCX_VERSION}.tar.gz
-          tar xvf ucx-${UCX_VERSION}.tar.gz
+          tar xf ucx-${UCX_VERSION}.tar.gz
           cd ucx-${UCX_VERSION}/
           ./configure CC=$CC CXX=$CXX CFLAGS="-Wno-error" --prefix=${HOME}/.local --without-go
+          make -j
+          make install
+      - if: ${{ matrix.mpi == 'openmpi' && steps.cache-mpi.outputs.cache-hit != 'true' }}
+        name: Install Open MPI
+        env:
+          OPENMPI_VERSION: 5.0.1
+        run: |
+          echo "Installing Open MPI v${OPENMPI_VERSION}..."
+          wget -q https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-${OPENMPI_VERSION}.tar.bz2
+          tar xf openmpi-${OPENMPI_VERSION}.tar.bz2
+          cd openmpi-${OPENMPI_VERSION}
+          ./configure CC=$CC CXX=$CXX --prefix=${HOME}/.local --with-ucx=${HOME}/.local --disable-man-pages --with-pmix=internal --with-hwloc=internal --with-libevent=internal
           make -j
           make install
       - name: Print environments
