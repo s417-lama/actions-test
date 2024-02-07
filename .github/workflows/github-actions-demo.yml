@@ -2,21 +2,7 @@ name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-  example_matrix:
+  mpi:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -44,7 +30,7 @@ jobs:
           tar xf ucx-${UCX_VERSION}.tar.gz
           cd ucx-${UCX_VERSION}/
           ./configure CC="$CC" CXX="$CXX" CFLAGS="-Wno-error" --prefix=${HOME}/.local --without-go
-          make -j
+          make -j$(nproc)
           make install
       - if: ${{ matrix.mpi == 'openmpi' && steps.cache-mpi.outputs.cache-hit != 'true' }}
         name: Build and install Open MPI
@@ -56,7 +42,7 @@ jobs:
           tar xf openmpi-${OPENMPI_VERSION}.tar.bz2
           cd openmpi-${OPENMPI_VERSION}
           ./configure CC="$CC" CXX="$CXX" --prefix=${HOME}/.local --with-ucx=${HOME}/.local --disable-man-pages --with-pmix=internal --with-hwloc=internal --with-libevent=internal
-          make -j
+          make -j$(nproc)
           make install
       - if: ${{ matrix.mpi == 'mpich' && steps.cache-mpi.outputs.cache-hit != 'true' }}
         name: Build and install MPICH
@@ -68,7 +54,7 @@ jobs:
           tar xf mpich-${MPICH_VERSION}.tar.gz
           cd mpich-${MPICH_VERSION}
           ./configure CC="$CC" CXX="$CXX" --prefix=${HOME}/.local
-          make -j
+          make -j$(nproc)
           make install
       - name: Print environments
         run: |
