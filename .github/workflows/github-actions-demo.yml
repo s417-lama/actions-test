@@ -10,7 +10,7 @@ jobs:
         compiler: [gcc-12, clang-15]
         mpi: [openmpi, mpich]
     steps:
-      - uses: ./.github/actions/setup-mpi
+      - uses: ./.github/actions/setup-mpi.yml
         with:
           compiler: ${{ matrix.compiler }}
           mpi: ${{ matrix.mpi }}
